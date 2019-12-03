@@ -1,3 +1,5 @@
+import scala.collection.mutable.ListBuffer
+
 object Tests extends App {
     //Math operations with char
     var b1 :List[Char] = List('a', 'c', 'e')
@@ -15,6 +17,12 @@ object Tests extends App {
     val sum_tup = ((tup1._1+vec1._1).toChar,tup1._2+vec1._2)
     println(sum_tup, abs2)
 
+    var list: ListBuffer[Int] = ListBuffer(4, 6, 2, 7, 0,8, 9)
+    println(list)
+    val old_elem = list.indexOf(7)
+    println(old_elem)
+    list(old_elem) = 77
+    println(list)
 
 
 }

@@ -1,5 +1,6 @@
 import Array._
 import scala.collection.mutable.ListBuffer
+import io.AnsiColor._
 
 object Board {
   var board_pos_states: Array[Array[String]] = ofDim[String](8,8) //'Empty', 'Human' or 'Machine'
@@ -17,7 +18,7 @@ object Board {
         if (i<=2){
           if((i+j)%2==0){
             board_pos_states(i)(j) = "Human"
-            var new_piece:Piece = new Piece(true, position = (('a'+j).toChar,i+1))
+            val new_piece:Piece = new Piece(true, position = (('a'+j).toChar,i+1))
             piece_list = piece_list :+ new_piece
           }
         }
@@ -213,8 +214,8 @@ object Board {
 
   }
 
-  //Get a valid move and execute it
-  def execute_move(old_pos: (Char, Int), new_pos: (Char, Int)) : Unit = {
+       //Get a valid move and execute it
+  def execute_move(old_pos: (Char, Int), new_pos: (Char, Int)) : Boolean = {
       val mov_piece = piece_list.filter(_.get_pos()==old_pos)
       val old_i = an2ij(old_pos._1, old_pos._2)._1
       val old_j = an2ij(old_pos._1, old_pos._2)._2
@@ -222,22 +223,33 @@ object Board {
       val new_j = an2ij(new_pos._1, new_pos._2)._2
       var cap_happened = false
 
-      if(mov_piece.length != 1)
+      if(mov_piece.length != 1) {
         println("######## ERROR #########")
+        println("Invalid move. Please, insert a valid move.")
+        return false
+      }
       else {
-        board_pos_states(old_i)(old_j) = "Empty"
+        //Update the board and piece_list with the movement
+        val old_piece = piece_list.filter(_.get_pos()==old_pos).head
+        val new_piece:Piece = new Piece(old_piece.get_is_human_team(), position = new_pos)
+        if(old_piece.is_king)
+          new_piece.set_king()
+        val elem_pos = piece_list.indexOf(old_piece)
+        piece_list(elem_pos) = new_piece
+
+          board_pos_states(old_i)(old_j) = "Empty"
         if (mov_piece.head.get_is_human_team())    board_pos_states(new_i)(new_j) = "Human"
         else board_pos_states(new_i)(new_j) = "Machine"
+
       }
 
-    //Check if the piece should become a king
+        //Check if the piece should become a king
       if(human_turn && new_pos._2 == 8)   mov_piece.head.set_king()
       else if(!human_turn && new_pos._2 == 1) mov_piece.head.set_king()
 
-
       if(human_turn) printf("Your move:\t(%c, %d)-(%c, %d)\n", old_pos._1, old_pos._2, new_pos._1, new_pos._2)
 
-    //If it happens a capture, delete the captured piece
+        //If it happens a capture, delete the captured piece
       if(math.abs(new_pos._2-old_pos._2) == 2){
         cap_happened = true
         val vec_dir = ((new_i-old_i)/2,(new_j-old_j)/2)
@@ -250,10 +262,13 @@ object Board {
       }
 
     //Check for double
-    if (cap_happened && new_cap_possible(new_pos)!=Nil) {
+    /*if (cap_happened && new_cap_possible(new_pos)!=Nil) {
 
     }
+
+     */
     human_turn = !human_turn
+    return true
   }
 
   def ai_move() : Unit = {
@@ -279,21 +294,24 @@ object Board {
 
   def display_board():Unit = {
     for(i<- -1 to 7){
-        for(j<- -1 to 7){
-          if(i == -1 && j == -1) print(" \t")
-          else if(i!= -1 && j != -1) {
-            if (board_pos_states(i)(j) == "Empty") print("0\t")
-            else if (board_pos_states(i)(j) == "Human") print("H\t")
-            else print("M\t")
-          }
-          else if (i == -1) printf("%c\t", 'A'+j)
-          else if (j == -1) printf("%d\t", i+1)
-
+      for(j<- -1 to 7){
+        if(i == -1 && j == -1) print(" \t")
+        else if(i!= -1 && j != -1) {
+          if (board_pos_states(i)(j) == "Empty") print(s"${BOLD}${WHITE}0\t")
+          else if (board_pos_states(i)(j) == "Human") print(s"${BOLD}${CYAN}H\t${RESET}")
+          else print(s"${BOLD}${RED}M\t${RESET}")
         }
+        else if (i == -1) printf("%c\t", 'A'+j)
+        else if (j == -1) printf("%d\t", i+1)
+
+      }
       print('\n')
     }
     print('\n')
   }
+
+
+
 
   def is_adversary_team(piece: Piece, pos: (Int, Int)):Boolean = {
     val i = pos._1
@@ -320,4 +338,14 @@ object Board {
 
     (a, n)
   }
+
+  // DEBUGING FUNCTION
+  def print_pieces(): Unit = {
+    for (cur_piece <- piece_list){
+      printf("(%c, %d), %b\n", cur_piece.pos._1, cur_piece.pos._2, cur_piece.is_human_team)
+    }
+  }
+
 }
+
+
