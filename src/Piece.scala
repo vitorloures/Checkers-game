@@ -11,6 +11,10 @@ class Piece (human_team : Boolean, position : (Char, Int)) {
     is_king
   }
 
+  def set_king(): Unit = {
+    is_king = true
+  }
+
   def get_pos():(Char, Int) = {
     pos
   }

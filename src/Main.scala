@@ -18,6 +18,7 @@ object Main extends App {
   Board.display_board()
   Board.print_mov_list()
   Board.execute_move(('g',3),('f',4))
+  Board.ai_move()
   Board.display_board()
 
   //do while compute_moves != NULL

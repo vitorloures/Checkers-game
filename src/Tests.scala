@@ -11,8 +11,9 @@ object Tests extends App {
     val tup1 = ('a',1)
     val vec1 = (1, 1)
 
+    val abs2 = math.abs(-2)
     val sum_tup = ((tup1._1+vec1._1).toChar,tup1._2+vec1._2)
-    println(sum_tup)
+    println(sum_tup, abs2)
 
 
 
