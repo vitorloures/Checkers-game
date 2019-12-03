@@ -17,5 +17,8 @@ object Main extends App {
   //Board.print_game_state()
   Board.display_board()
   Board.print_mov_list()
-  print(Board.board_pos_states(7)(5), Board.board_pos_states(6)(6))
+  Board.execute_move(('g',3),('f',4))
+  Board.display_board()
+
+  //do while compute_moves != NULL
 }

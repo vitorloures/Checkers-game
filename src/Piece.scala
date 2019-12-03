@@ -1,4 +1,4 @@
-class Piece (human_team : Boolean, position : Tuple2[Char,Int]) {
+class Piece (human_team : Boolean, position : (Char, Int)) {
   var is_human_team = human_team
   var is_king : Boolean  = false
   var pos = position

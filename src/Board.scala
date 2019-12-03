@@ -1,7 +1,7 @@
 import Array._
 
 object Board {
-  var board_pos_states  = ofDim[String](8,8) //'Empty', 'Human' or 'Machine'
+  var board_pos_states: Array[Array[String]] = ofDim[String](8,8) //'Empty', 'Human' or 'Machine'
   var human_turn : Boolean = true
   var piece_list: List[Piece] = List()
   var possible_moves: List[((String, Int),(String, Int))] = List()
@@ -31,64 +31,6 @@ object Board {
       }
     }
 
-  /*
-    //Substitute this code section for a for loop : toInt and toChar will help
-    var pos = ('a',1)
-    var new_piece:Piece = new Piece(true, position = ('a',1))
-    piece_list = piece_list :+ new_piece
-
-    //board_pos_states()//Add state Human or Machine
-
-    new_piece = new Piece(true, position = ('c',1))
-    piece_list = piece_list :+ new_piece
-    new_piece= new Piece(true, position = ('e',1))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('g',1))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('b',2))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('d',2))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('f',2))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('h',2))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('a',3))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('c',3))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('e',3))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(true, position = ('g',3))
-    piece_list = piece_list :+ new_piece
-
-    new_piece = new Piece(false, position = ('b',6))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('d',6))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('f',6))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('h',6))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('a',7))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('c',7))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('e',7))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('g',7))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('b',8))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('d',8))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('f',8))
-    piece_list = piece_list :+ new_piece
-    new_piece = new Piece(false, position = ('h',8))
-    piece_list = piece_list :+ new_piece
-    */
-
-
     //Compute moves
     //possible_moves = compute_moves()
 
@@ -111,20 +53,23 @@ object Board {
 
     for(i <- piece_list){
       //Moving logic for normal pieces
-      if(!i.get_is_king()){
+      val is_i_turn = (i.is_human_team && human_turn) || (!i.is_human_team && !human_turn)
+      if(!i.get_is_king() && is_i_turn){
         var hum_or_mac = 1
         if(!i.get_is_human_team()) hum_or_mac = -1
 
-        val new_i_1 = (i.get_pos()._1-'a').toInt + vec_1._1*hum_or_mac
-        val new_j_1 = i.get_pos()._2 + vec_1._2*hum_or_mac
+        val old_i = an2ij(i.get_pos()._1, i.get_pos()._2)._1
+        val old_j = an2ij(i.get_pos()._1, i.get_pos()._2)._2
+        val new_i_1 = old_i + vec_1._1*hum_or_mac
+        val new_j_1 = old_j + vec_1._2*hum_or_mac
         val in_board_1 = (0<=new_i_1 && new_i_1 <=7 && 0<=new_j_1 && new_j_1 <= 7)
-        val new_i_2 = (i.get_pos()._1-'a').toInt + vec_2._1*hum_or_mac
-        val new_j_2 = i.get_pos()._2 + vec_2._2*hum_or_mac
+        val new_i_2 = old_i + vec_2._1*hum_or_mac
+        val new_j_2 = old_j + vec_2._2*hum_or_mac
         val in_board_2 = (0<=new_i_2 && new_i_2 <=7 && 0<=new_j_2 && new_j_2 <= 7)
 
         if(in_board_1){
-          if(board_pos_states(new_i_1)(new_j_1) == "Empty" && ((human_turn && i.get_is_human_team()) || (!human_turn && !i.get_is_human_team()))){
-            moves = (i.get_pos(), ((new_i_1+'a').toChar,new_j_1))::moves
+          if(board_pos_states(new_i_1)(new_j_1) == "Empty") {
+            moves = (i.get_pos(), ij2an(new_i_1, new_j_1))::moves
           }
           //Capturing logic for normal piece
           else if(board_pos_states(new_i_1)(new_j_1) == "Machine"){
@@ -133,14 +78,13 @@ object Board {
         }
         if(in_board_2){
           if(board_pos_states(new_i_2)(new_j_2) == "Empty"){
-            moves = (i.get_pos(), ((new_i_2+'a').toChar,new_j_2))::moves
+            moves = (i.get_pos(), ij2an(new_i_2, new_j_2))::moves
           }
           //Capturing logic
           else if(board_pos_states(new_i_2)(new_j_2) == "Machine"){
 
           }
         }
-        //For the Human Queen
       }
 
       //Queen's case
@@ -150,6 +94,28 @@ object Board {
     }
 
     moves
+  }
+
+  //Get a valid move and execute it
+  def execute_move(old_pos: (Char, Int), new_pos: (Char, Int)) : Unit = {
+      val mov_piece = piece_list.filter(_.get_pos()==old_pos)
+      if(mov_piece.length != 1)
+        println("######## ERROR #########")
+      else {
+        val old_i = an2ij(old_pos._1, old_pos._2)._1
+        val old_j = an2ij(old_pos._1, old_pos._2)._2
+        board_pos_states(old_i)(old_j) = "Empty"
+        val new_i = an2ij(new_pos._1, new_pos._2)._1
+        val new_j = an2ij(new_pos._1, new_pos._2)._2
+        if (mov_piece.head.get_is_human_team())    board_pos_states(new_i)(new_j) = "Human"
+        else board_pos_states(new_i)(new_j) = "Machine"
+      }
+
+    //If is a capture, delete dead piece
+  }
+
+  def AI_move() : Unit = {
+    
   }
 
   def print_mov_list():Unit = {
@@ -175,15 +141,20 @@ object Board {
     print('\n')
   }
 
+  //Convert from position in the board (a,1) to the matrix (0,0)
+  def an2ij(char: Char, num: Int) : (Int, Int) = {
+    val i = num-1
+    val j = (char-'a').toInt
 
-  /*
-  1)
-  2)
-  3)
-  4)
-  5)
-  6)
-  */
+    (i,j)
+  }
 
+  //Convert from position in the matrix (0,0) to the board (a,1)
+  def ij2an(i: Int, j: Int): (Char, Int) = {
+    val a = ('a'+j).toChar
+    val n = i+1
+
+    (a, n)
+  }
 
 }
