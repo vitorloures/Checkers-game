@@ -14,44 +14,50 @@ object Main extends App {
     println("***************Welcome to the CHECKERS Game! ***************\n")
     println("Instructions:")
     println("If you are going to do multiple capture (moves), just do one by one move\n")
+    println("Now, lets start: Type your command (restart, help or a move)")
     Board.start_game()
     Board.display_board()
 
     do{
-      println("Now, lets start: Type your command (restart, help or a move)")
       display_instruction()
 
-      val input = scala.io.StdIn.readInt()
+      val line = scala.io.StdIn.readLine.trim
 
-      input match {
-        case 1 =>
-          println("Give the original position of the piece. for the example \"a-3\" ")
+
+
+      //val input = scala.io.StdIn.readInt()
+
+      line match {
+        case "1" =>
+          println("Give the original position of the piece. For example \"a-3\" ")
           var read_tuple = scala.io.StdIn.readLine()
           var tuple = read_tuple.split("-")
           val org_tuple = (tuple(0).charAt(0), tuple(1).toInt)
 
-          println("Give the destination position of the piece. for the example \"g-7\"")
+          println("Give the destination position of the piece. For example \"g-7\"")
           read_tuple = scala.io.StdIn.readLine()
           tuple = read_tuple.split("-")
           val dst_tuple = (tuple(0).charAt(0), tuple(1).toInt)
 
           if(Board.execute_move(org_tuple,dst_tuple)) {
             Board.display_board()
-            Board.print_pieces()
             // AI move
             Board.ai_move()
-            Board.print_pieces()
             Board.display_board()
           }
-        case 2 =>
+        case "2" =>
           Board.print_mov_list()
 
-        case 3 =>
+        case "3" =>
           Board.start_game()
           println("New game !")
           Board.display_board()
 
-        case 4 => System.exit(1)
+        case "4" => System.exit(1)
+
+        case "5" => Board.print_pieces()
+
+        case "6" => Board.rand_move()
 
         case default =>
           println("Wrong input")
