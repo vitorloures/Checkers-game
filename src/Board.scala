@@ -278,13 +278,13 @@ object Board {
       }
 
     //Check for double
-    if (cap_happened && new_cap_possible(new_pos)==true) {
+    if (cap_happened && new_cap_possible(new_pos)) {
+      printf("\n\n\ndouble capture\n\n\nn")
       val pos_moves = compute_moves()
       val from = pos_moves.head._1
       val to = pos_moves.head._2
       execute_move(from, to)
     }
-
 
     human_turn = !human_turn
     true
@@ -300,16 +300,6 @@ object Board {
       execute_move(old_pos, new_pos)
     printf("AI move:\t(%c, %d)-(%c, %d)\n", old_pos._1, old_pos._2, new_pos._1, new_pos._2)
     println("Your turn")
-  }
-
-  def print_mov_list():Unit = {
-    val moves = compute_moves()
-    println("Possible moves: ", moves.length)
-    for(i <- moves){
-      print(i)
-      print(" // ")
-    }
-    print('\n')
   }
 
   def display_board():Unit = {
@@ -394,13 +384,6 @@ object Board {
   }
   }
 
-def print_game_state(): Unit = {
-    println("Printing game state")
-    for(i <- piece_list){
-      println(i.get_is_human_team(), i.get_pos())
-    }
-  }
-
   def rand_move() : Unit = {
     val pos_moves = compute_moves()
     val rand = scala.util.Random
@@ -409,11 +392,28 @@ def print_game_state(): Unit = {
     val new_pos = pos_moves(choose)._2
     if(compute_moves() != Nil)
       execute_move(old_pos, new_pos)
-    printf("Your move:\t(%c, %d)-(%c, %d)\n", old_pos._1, old_pos._2, new_pos._1, new_pos._2)
+    //printf("Your move:\t(%c, %d)-(%c, %d)\n", old_pos._1, old_pos._2, new_pos._1, new_pos._2)
     Board.display_board()
     // AI move
     Board.ai_move()
     Board.display_board()
     }
+
+  def print_mov_list():Unit = {
+    val moves = compute_moves()
+    println("Possible moves: ", moves.length)
+    for(i <- moves){
+      print(i)
+      print(" // ")
+    }
+    print('\n')
+  }
+
+  def print_game_state(): Unit = {
+    println("Printing game state")
+    for(i <- piece_list){
+      println(i.get_is_human_team(), i.get_pos())
+    }
+  }
 
 }
