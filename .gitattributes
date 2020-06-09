@@ -34,3 +34,8 @@ text eol=lf
 *.png     binary
 *.class   -text diff=class
 *.jar     -text diff=jar
+
+*.scala linguist-detectable=true
+*.js linguist-detectable=false
+*.html linguist-detectable=false
+*.xml linguist-detectable=false
